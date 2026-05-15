@@ -10,6 +10,7 @@ export interface Employee {
   project: string;
   operationCenter: string;
   disputeType: string;
+  disputeStage?: string;
   disputeDescription: string;
   avatarColor: string;
   settlementAmount?: number;
@@ -21,6 +22,7 @@ export interface DisputeRecord {
   date: string;
   handler: string;
   type: string;
+  stage?: string;
   description: string;
   recorder: string;
 }
@@ -28,9 +30,12 @@ export interface DisputeRecord {
 export type ViewState = 'list' | 'detail';
 
 export const DISPUTE_TYPES = [
-  '劳动监察投诉/举报',
-  '仲裁前调解',
-  '劳动仲裁',
+  '诉讼',
+  '监察投诉举报',
+  '五险一金投诉举报',
+];
+
+export const DISPUTE_STAGES = [
   '一审',
   '二审',
   '再审',

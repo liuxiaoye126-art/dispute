@@ -14,12 +14,10 @@ interface DisputeTableProps {
 
 export const DisputeTable = ({ data, onDetailClick, onCloseCaseClick }: DisputeTableProps) => {
   const getBadgeColor = (type: string) => {
-    if (type === '劳动监察投诉/举报') return 'bg-red-100 text-red-600';
-    if (type === '仲裁前调解') return 'bg-yellow-100 text-yellow-700';
-    if (type === '劳动仲裁') return 'bg-orange-100 text-orange-600';
-    if (type === '一审') return 'bg-indigo-100 text-indigo-600';
-    if (type === '二审') return 'bg-rose-100 text-rose-600';
-    return 'bg-cyan-100 text-primary';
+    if (type === '诉讼') return 'bg-indigo-100 text-indigo-600';
+    if (type === '监察投诉举报') return 'bg-red-100 text-red-600';
+    if (type === '五险一金投诉举报') return 'bg-cyan-100 text-primary';
+    return 'bg-surface-container text-on-surface-variant';
   };
 
   return (
@@ -34,6 +32,7 @@ export const DisputeTable = ({ data, onDetailClick, onCloseCaseClick }: DisputeT
               <th className="px-4 py-3">结案金额</th>
               <th className="px-4 py-3">支付日期</th>
               <th className="px-4 py-3">争议类型</th>
+              <th className="px-4 py-3">争议阶段</th>
               <th className="px-4 py-3 min-w-[200px]">争议说明</th>
               <th className="px-4 py-3 text-center">操作</th>
             </tr>
@@ -56,6 +55,9 @@ export const DisputeTable = ({ data, onDetailClick, onCloseCaseClick }: DisputeT
                   <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${getBadgeColor(employee.disputeType)}`}>
                     {employee.disputeType}
                   </span>
+                </td>
+                <td className="px-4 py-4 text-on-surface-variant text-xs">
+                  {employee.disputeStage || '--'}
                 </td>
                 <td className="px-4 py-4 text-on-surface-variant max-w-xs truncate">
                   {employee.disputeDescription}

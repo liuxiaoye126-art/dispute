@@ -13,16 +13,16 @@ interface DisputeDetailProps {
 }
 
 const MOCK_RECORDS: DisputeRecord[] = [
-  { id: '1', date: '2023-11-15', handler: '张美玲', type: '仲裁前调解', description: '双方就未休年假工资补偿金额存在分歧...', recorder: '王强' },
-  { id: '2', date: '2023-10-20', handler: '李伟', type: '内部协商', description: '关于绩效考核评分标准的异议沟通', recorder: '王强' },
-  { id: '3', date: '2024-01-20', handler: '张美玲', type: '一审阶段', description: '仲裁裁决书已下达，公司提起起诉，进入一审诉讼阶段。目前正在准备相关证据材料。', recorder: '王强' },
+  { id: '1', date: '2023-11-15', handler: '张美玲', type: '监察投诉举报', description: '双方就社保缴纳基数存在分歧，已向监管渠道提交说明材料。', recorder: '王强' },
+  { id: '2', date: '2023-10-20', handler: '李伟', type: '五险一金投诉举报', description: '关于公积金补缴情形的异议沟通，目前正在核对缴纳记录。', recorder: '王强' },
+  { id: '3', date: '2024-01-20', handler: '张美玲', type: '诉讼', stage: '一审', description: '案件已进入一审诉讼阶段，目前正在准备相关证据材料。', recorder: '王强' },
 ];
 
 const getBadge = (type: string) => {
   const map: Record<string, string> = {
-    '仲裁前调解': 'bg-yellow-100 text-yellow-700',
-    '内部协商': 'bg-cyan-100 text-primary',
-    '一审阶段': 'bg-purple-100 text-purple-600',
+    '诉讼': 'bg-indigo-100 text-indigo-600',
+    '监察投诉举报': 'bg-red-100 text-red-600',
+    '五险一金投诉举报': 'bg-cyan-100 text-primary',
   };
   return map[type] ?? 'bg-surface-container text-on-surface-variant';
 };
@@ -82,6 +82,7 @@ export const DisputeDetail = ({ onBack }: DisputeDetailProps) => {
                 <th className="px-5 py-3">争议处理日期</th>
                 <th className="px-5 py-3">处理人</th>
                 <th className="px-5 py-3">争议类型</th>
+                <th className="px-5 py-3">争议阶段</th>
                 <th className="px-5 py-3">争议说明</th>
                 <th className="px-5 py-3">录入人</th>
                 <th className="px-5 py-3 text-right">操作</th>
@@ -97,6 +98,7 @@ export const DisputeDetail = ({ onBack }: DisputeDetailProps) => {
                       {record.type}
                     </span>
                   </td>
+                  <td className="px-5 py-3 text-on-surface-variant">{record.stage || '--'}</td>
                   <td className="px-5 py-3 text-on-surface-variant max-w-xs truncate">{record.description}</td>
                   <td className="px-5 py-3">{record.recorder}</td>
                   <td className="px-5 py-3 text-right space-x-3">

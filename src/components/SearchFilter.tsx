@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { Search, RefreshCw, UserPlus } from 'lucide-react';
-import { PROJECTS, OPERATION_CENTERS, DISPUTE_TYPES } from '../types';
+import React, { useState } from 'react';
+import { ChevronDown, Search, RefreshCw, UserPlus } from 'lucide-react';
+import { PROJECTS, OPERATION_CENTERS, DISPUTE_STAGES, DISPUTE_TYPES } from '../types';
 
 const LabelInput = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="flex flex-col gap-1.5">
@@ -19,6 +19,20 @@ interface SearchFilterProps {
 }
 
 export const SearchFilter = ({ onAddClick }: SearchFilterProps) => {
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedStage, setSelectedStage] = useState('');
+  const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
+  const needsStage = selectedTypes.includes('诉讼');
+
+  const toggleType = (type: string) => {
+    setSelectedStage((currentStage) => (type === '诉讼' && selectedTypes.includes(type) ? '' : currentStage));
+    setSelectedTypes((currentTypes) =>
+      currentTypes.includes(type)
+        ? currentTypes.filter((item) => item !== type)
+        : [...currentTypes, type]
+    );
+  };
+
   return (
     <div className="admin-card mb-4 px-5 py-4">
       {/* 第一行 */}
@@ -39,10 +53,35 @@ export const SearchFilter = ({ onAddClick }: SearchFilterProps) => {
           </select>
         </LabelInput>
         <LabelInput label="争议类型">
-          <select className="admin-input">
-            <option value="">全部类型</option>
-            {DISPUTE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsTypeDropdownOpen((open) => !open)}
+              className="admin-input flex items-center justify-between text-left"
+            >
+              <span className={`truncate whitespace-nowrap ${selectedTypes.length ? 'text-on-surface' : 'text-on-surface-variant'}`}>
+                {selectedTypes.length ? selectedTypes.join('、') : '全部类型'}
+              </span>
+              <ChevronDown className={`h-4 w-4 text-on-surface-variant transition-transform ${isTypeDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isTypeDropdownOpen && (
+              <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 rounded border border-outline-variant bg-white p-2 shadow-[0_8px_24px_rgba(15,23,42,0.12)]">
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 px-2 py-1">
+                  {DISPUTE_TYPES.map((type) => (
+                    <label key={type} className="flex cursor-pointer items-center gap-2 whitespace-nowrap text-sm text-on-surface">
+                      <input
+                        type="checkbox"
+                        checked={selectedTypes.includes(type)}
+                        onChange={() => toggleType(type)}
+                        className="h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary/30"
+                      />
+                      <span>{type}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </LabelInput>
       </div>
       {/* 第二行 */}
@@ -54,7 +93,14 @@ export const SearchFilter = ({ onAddClick }: SearchFilterProps) => {
             <input type="date" className="admin-input" />
           </div>
         </LabelInput>
-        <div />
+        {needsStage ? (
+          <LabelInput label="争议阶段">
+            <select value={selectedStage} onChange={(event) => setSelectedStage(event.target.value)} className="admin-input">
+              <option value="">全部阶段</option>
+              {DISPUTE_STAGES.map((stage) => <option key={stage} value={stage}>{stage}</option>)}
+            </select>
+          </LabelInput>
+        ) : <div />}
         <div />
         <div className="flex items-center justify-end gap-2">
           <button className="flex items-center gap-1.5 rounded bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors">

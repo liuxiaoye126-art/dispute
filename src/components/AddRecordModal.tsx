@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { X, Maximize2 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { DISPUTE_TYPES } from '../types';
+import { DISPUTE_STAGES, DISPUTE_TYPES } from '../types';
 
 interface AddRecordModalProps {
   onClose: () => void;
@@ -25,8 +25,20 @@ const FormRow = ({ label, required, children }: { label: string; required?: bool
 
 export const AddRecordModal = ({ onClose, mode = 'person' }: AddRecordModalProps) => {
   const [handlers, setHandlers] = useState<string[]>(['管理员']);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedStage, setSelectedStage] = useState('');
   const removeHandler = (name: string) => setHandlers(prev => prev.filter(h => h !== name));
   const isPersonMode = mode === 'person';
+  const needsStage = selectedTypes.includes('诉讼');
+
+  const toggleType = (type: string) => {
+    setSelectedStage((currentStage) => (type === '诉讼' && selectedTypes.includes(type) ? '' : currentStage));
+    setSelectedTypes((currentTypes) =>
+      currentTypes.includes(type)
+        ? currentTypes.filter((item) => item !== type)
+        : [...currentTypes, type]
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
@@ -91,11 +103,31 @@ export const AddRecordModal = ({ onClose, mode = 'person' }: AddRecordModalProps
           </FormRow>
 
           <FormRow label="争议类型" required>
-            <select className="admin-input">
-              <option value="">请选择争议类型</option>
-              {DISPUTE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
+            <div className="px-1 py-1">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:flex-nowrap">
+                {DISPUTE_TYPES.map((type) => (
+                  <label key={type} className="flex cursor-pointer items-center gap-2 whitespace-nowrap text-sm text-on-surface">
+                    <input
+                      type="checkbox"
+                      checked={selectedTypes.includes(type)}
+                      onChange={() => toggleType(type)}
+                      className="h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary/30"
+                    />
+                    <span>{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
           </FormRow>
+
+          {needsStage && (
+            <FormRow label="争议阶段" required>
+              <select value={selectedStage} onChange={(event) => setSelectedStage(event.target.value)} className="admin-input">
+                <option value="">请选择争议阶段</option>
+                {DISPUTE_STAGES.map((stage) => <option key={stage} value={stage}>{stage}</option>)}
+              </select>
+            </FormRow>
+          )}
 
           <FormRow label="争议说明" required>
             <textarea
